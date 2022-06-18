@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "React Boilerplate",
   "scripts": {
-    "start": "cross-env NODE_ENV=development webpack serve",
+    "start": "cross-env NODE_ENV=development webpack serve --hot",
     "build": "cross-env NODE_ENV=development webpack",
     "build:prod": "cross-env NODE_ENV=production webpack",
     "lint": "prettier --check .",

@@ -1,7 +1,10 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
+import { App } from './App';
+
+import './assets/sass/main.scss';
 
 const container = document.getElementById('root')!;
 const root = createRoot(container);
 
-root.render(<div style={{ backgroundColor: 'red' }}>Hello World</div>);
+root.render(<App />);

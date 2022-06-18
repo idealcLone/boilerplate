@@ -8,6 +8,7 @@ const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin'
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 
+const dev = process.env.NODE_ENV === 'development'; // to check if the mode is 'development'
 let mode = 'development';
 let target = 'web';
 
@@ -16,31 +17,33 @@ const plugins = [
     title: 'Boilerplate',
     template: './src/index.html',
   }),
-  new CleanWebpackPlugin(),
-  new CopyWebpackPlugin({
-    patterns: [
-      {
-        from: './src/assets',
-        to: 'assets',
-        globOptions: {
-          ignore: ['*.DS_Store'],
-        },
-        noErrorOnMissing: true,
-      },
-    ],
-  }),
 ];
 
-if (process.env.NODE_ENV === 'production') {
+if (dev) {
+  plugins.push(new ReactRefreshWebpackPlugin());
+} else {
   mode = 'production';
   target = 'browserslist';
   plugins.push(
-    new MiniCssExtractPlugin({
-      filename: 'styles/[name].[contenthash].css',
-    })
+    ...[
+      new MiniCssExtractPlugin({
+        filename: 'styles/[name].[contenthash].css',
+      }),
+      new CleanWebpackPlugin(),
+      new CopyWebpackPlugin({
+        patterns: [
+          {
+            from: './src/assets',
+            to: 'assets',
+            globOptions: {
+              ignore: ['*.DS_Store'],
+            },
+            noErrorOnMissing: true,
+          },
+        ],
+      }),
+    ]
   );
-} else {
-  plugins.push(new ReactRefreshWebpackPlugin());
 }
 
 module.exports = {
@@ -50,8 +53,7 @@ module.exports = {
   entry: './src/index.tsx',
   devtool: 'inline-source-map',
   devServer: {
-    historyApiFallback: false,
-    compress: true,
+    historyApiFallback: true,
     hot: true,
     port: 3000,
   },
@@ -81,9 +83,9 @@ module.exports = {
       {
         test: /\.(s[ac]|c)ss$/i,
         use: [
-          MiniCssExtractPlugin.loader,
-          { loader: 'sass-loader', options: { modules: true } },
+          !dev ? MiniCssExtractPlugin.loader : 'style-loader',
           'css-loader',
+          'sass-loader',
           'postcss-loader',
         ],
       },
